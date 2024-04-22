@@ -4,12 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CommonResponsePojo {
+public class ProductListResponse extends CommonResponsePojo{
 
-    private boolean status;
-    private int returnCode;
-    private String errorMessage;
+    private List<ProductResponsePOJO> productsList;
 }

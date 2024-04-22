@@ -29,9 +29,9 @@ public class ProductEntity {
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private ProductCategoryEntity categoryId;
 
-    //@OneToOne
-    //@JoinColumn(name = "inventory_id", referencedColumnName = "id")
-    //private ProductInventoryEntity inventoryId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "inventory_id", referencedColumnName = "id")
+    private ProductInventoryEntity inventoryId;
 
     private BigDecimal price;
 

@@ -1,5 +1,6 @@
 package com.ankit.controller;
 
+import com.ankit.pojo.ProductListResponse;
 import com.ankit.pojo.ProductResponsePOJO;
 import com.ankit.service.ProductService;
 import com.ankit.service.impl.ProductServiceImpl;
@@ -16,16 +17,17 @@ public class ProductController {
     private ProductServiceImpl productService;
 
     @GetMapping("/all")
-    public ProductResponsePOJO getProducts(){
+    public ProductListResponse getProducts(){
+        ProductListResponse productListResponse = new ProductListResponse();
         ProductResponsePOJO productPojo = new ProductResponsePOJO();
         try {
-            productPojo = productService.getAllProducts();
+            productListResponse = productService.getAllProducts();
         }
         catch (Exception ex) {
-            productPojo.setStatus("error");
-            productPojo.setReturnCode(500);
-            productPojo.setErrorMessage(ex.getMessage());
+            productListResponse.setStatus(false);
+            productListResponse.setReturnCode(500);
+            productListResponse.setErrorMessage("Server Exception");
         }
-        return productPojo;
+        return productListResponse;
     }
 }

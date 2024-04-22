@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CommonResponsePojo {
-
-    private boolean status;
-    private int returnCode;
-    private String errorMessage;
+public class ProductCategoryPOJO {
+    private String categoryName;
+    private String parentCategoryName;
 }
