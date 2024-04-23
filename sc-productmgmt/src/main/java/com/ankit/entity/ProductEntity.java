@@ -29,7 +29,7 @@ public class ProductEntity {
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private ProductCategoryEntity categoryId;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "inventory_id", referencedColumnName = "id")
     private ProductInventoryEntity inventoryId;
 

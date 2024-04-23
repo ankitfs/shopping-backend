@@ -28,4 +28,8 @@ public class ProductInventoryEntity {
 
     //@OneToOne(mappedBy = "inventoryId")
     //private ProductEntity product;
+
+    public ProductInventoryEntity(Integer quantity) {
+        this.quantity = quantity;
+    }
 }

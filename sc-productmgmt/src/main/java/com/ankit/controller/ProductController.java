@@ -1,13 +1,13 @@
 package com.ankit.controller;
 
+import com.ankit.pojo.CommonResponsePojo;
+import com.ankit.pojo.ProductCreateUpdatePojo;
 import com.ankit.pojo.ProductListResponse;
 import com.ankit.pojo.ProductResponsePOJO;
 import com.ankit.service.ProductService;
 import com.ankit.service.impl.ProductServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/product")
@@ -26,8 +26,27 @@ public class ProductController {
         catch (Exception ex) {
             productListResponse.setStatus(false);
             productListResponse.setReturnCode(500);
-            productListResponse.setErrorMessage("Server Exception");
+            productListResponse.setMessage("Server Exception");
         }
         return productListResponse;
+    }
+
+    //Handle Product Creation Request
+    @PostMapping
+    public CommonResponsePojo createProduct(@RequestBody ProductCreateUpdatePojo request){
+        System.out.println("Entered createProduct Controller");
+        CommonResponsePojo response = null;
+        try {
+            response = productService.createProduct(request);
+        }
+        catch (Exception ex) {
+            response = new CommonResponsePojo();
+
+            response.setStatus(false);
+            response.setReturnCode(500);
+            response.setMessage("Internal Server Error");
+        }
+
+        return response;
     }
 }

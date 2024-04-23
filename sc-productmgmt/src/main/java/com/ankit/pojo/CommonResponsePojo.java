@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CommonResponsePojo {
 
-    private boolean status;
+    private boolean status = false;
     private int returnCode;
-    private String errorMessage;
+    private String message;
 }
