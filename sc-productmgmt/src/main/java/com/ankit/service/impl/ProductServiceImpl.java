@@ -9,8 +9,11 @@ import com.ankit.exception.InvalidRequestException;
 import com.ankit.pojo.*;
 import com.ankit.service.ProductService;
 import com.ankit.utility.HelperMethods;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -18,6 +21,8 @@ import java.util.List;
 
 @Service
 public class ProductServiceImpl implements ProductService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
 
     @Autowired
     private ProductRepository productRepository;
@@ -112,5 +117,13 @@ public class ProductServiceImpl implements ProductService {
         System.out.println(productCategory);
 
         return productCategory;
+    }
+
+    @Transactional
+    @Override
+    public void deleteProduct(String productSKU) throws Exception {
+
+        productRepository.deleteBySKU(productSKU);
+
     }
 }

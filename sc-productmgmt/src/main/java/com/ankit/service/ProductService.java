@@ -13,4 +13,6 @@ public interface ProductService {
     public CommonResponsePojo createProduct(ProductCreateUpdatePojo createUpdatePojo) throws Exception;
 
     public ProductCategoryEntity getProductCategoryDetail(String categoryName, String parentCategoryName) throws Exception;
+
+    public void deleteProduct(String productSKU) throws Exception;
 }

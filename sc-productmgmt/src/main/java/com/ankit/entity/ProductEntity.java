@@ -23,6 +23,7 @@ public class ProductEntity {
 
     private String description;
 
+    @Column(name = "sku")
     private String SKU;
 
     @ManyToOne
