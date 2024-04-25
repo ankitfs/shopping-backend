@@ -1,10 +1,9 @@
 package com.ankit.controller;
 
 import com.ankit.pojo.CommonResponsePojo;
-import com.ankit.pojo.ProductCreateUpdatePojo;
-import com.ankit.pojo.ProductListResponse;
-import com.ankit.pojo.ProductResponsePOJO;
-import com.ankit.service.ProductService;
+import com.ankit.pojo.productcategory.ProductCreateUpdatePojo;
+import com.ankit.pojo.product.ProductListResponse;
+import com.ankit.pojo.product.ProductResponsePOJO;
 import com.ankit.service.impl.ProductServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,8 +19,9 @@ public class ProductController {
     @Autowired
     private ProductServiceImpl productService;
 
+    //Getting all products
     @GetMapping("/all")
-    public ProductListResponse getProducts(){
+    public ProductListResponse getProductsList(){
         logger.info("Entered");
         ProductListResponse productListResponse = new ProductListResponse();
         ProductResponsePOJO productPojo = new ProductResponsePOJO();
@@ -35,6 +35,24 @@ public class ProductController {
         }
         logger.info("Exit");
         return productListResponse;
+    }
+
+    //API for getting single product details
+    @GetMapping("/{sku}")
+    public ProductResponsePOJO getProductDetail(String productSKU) {
+        ProductResponsePOJO productPojo = null;
+        try {
+            productPojo = productService.getProductDetail(productSKU);
+            productPojo.setStatus(true);
+            productPojo.setReturnCode(200);
+        }
+        catch (Exception ex) {
+            logger.error(ex.getMessage());
+            productPojo.setStatus(false);
+            productPojo.setReturnCode(500);
+            productPojo.setMessage("Server Error");
+        }
+        return productPojo;
     }
 
     //Handle Product Creation Request
@@ -74,4 +92,5 @@ public class ProductController {
         }
         return response;
     }
+
 }

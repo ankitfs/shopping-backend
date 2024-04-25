@@ -18,4 +18,6 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Integer>
     //@Query(nativeQuery = true, value = "delete from product p where p.sku = :product")
     //@Query(value = "delete from ProductEntity p where p.SKU = :product")
     void deleteBySKU(String SKU);
+
+    ProductEntity findBySKU(String SKU);
 }

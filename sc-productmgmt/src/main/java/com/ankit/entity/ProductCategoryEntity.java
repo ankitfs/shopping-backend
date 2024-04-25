@@ -46,4 +46,6 @@ public class ProductCategoryEntity {
     @Column(name = "modified_at")
     private Timestamp modifiedAt;
 
+    @Column(name = "level")
+    private Integer level;
 }

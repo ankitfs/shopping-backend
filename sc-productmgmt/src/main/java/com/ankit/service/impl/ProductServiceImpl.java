@@ -7,6 +7,11 @@ import com.ankit.entity.ProductEntity;
 import com.ankit.entity.ProductInventoryEntity;
 import com.ankit.exception.InvalidRequestException;
 import com.ankit.pojo.*;
+import com.ankit.pojo.product.ProductListResponse;
+import com.ankit.pojo.product.ProductResponsePOJO;
+import com.ankit.pojo.productcategory.ProductCategoryPOJO;
+import com.ankit.pojo.productcategory.ProductCreateUpdatePojo;
+import com.ankit.service.ProductCategoryService;
 import com.ankit.service.ProductService;
 import com.ankit.utility.HelperMethods;
 import org.slf4j.Logger;
@@ -16,6 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +30,9 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService {
 
     private static final Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
+
+    @Autowired
+    private ProductCategoryService productCategoryService;
 
     @Autowired
     private ProductRepository productRepository;
@@ -63,6 +73,25 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public ProductResponsePOJO getProductDetail(String productSKU) throws Exception {
+        ProductResponsePOJO productPojo = new ProductResponsePOJO();
+        ProductEntity productEntity1 = productRepository.findBySKU(productSKU);
+        logger.info("Product Entity Details::{}",productEntity1);
+        productPojo.setPid(productEntity1.getId());
+        productPojo.setPname(productEntity1.getName());
+        productPojo.setPdescription(productEntity1.getDescription());
+        productPojo.setPSKU(productEntity1.getSKU());
+        productPojo.setCategory(new ProductCategoryPOJO(
+                productEntity1.getCategoryId().getName(),
+                productEntity1.getCategoryId().getParentId().getName()));
+        productPojo.setPrice(productEntity1.getPrice());
+        productPojo.setActive(productEntity1.getActive());
+        productPojo.setInventory(productEntity1.getInventoryId().getQuantity());
+        productPojo.setCreationDate(productEntity1.getCreatedAt());
+        return productPojo;
+    }
+
+    @Override
     public CommonResponsePojo createProduct(ProductCreateUpdatePojo createUpdatePojo) throws Exception {
 
         //Validation of Input Parameters like Not Null, Not Empty
@@ -77,7 +106,7 @@ public class ProductServiceImpl implements ProductService {
         }
 
         //Validation of Whether Category in Request body are valid
-        ProductCategoryEntity productCategoryEntity = getProductCategoryDetail(createUpdatePojo.getCategory().getCategoryName(), createUpdatePojo.getCategory().getParentCategoryName());
+        ProductCategoryEntity productCategoryEntity = productCategoryService.getProductCategoryDetail(createUpdatePojo.getCategory().getCategoryName(), createUpdatePojo.getCategory().getParentCategoryName());
         if(productCategoryEntity == null) {
             throw new InvalidRequestException("Input Categories didn't Exist");
         }
@@ -95,10 +124,12 @@ public class ProductServiceImpl implements ProductService {
         productEntity.setPrice(createUpdatePojo.getPrice());
 
         ProductInventoryEntity productInventoryEntity = new ProductInventoryEntity(createUpdatePojo.getInventory());
+        productInventoryEntity.setCreatedAt(Timestamp.from(Instant.now()));
+
         productEntity.setInventoryId(productInventoryEntity);
 
         productEntity = productRepository.save(productEntity);
-        System.out.println("Product has been created with ID:"+productEntity.getId());
+        logger.info("Product has been created with ID:"+productEntity.getId());
 
         CommonResponsePojo commonResponsePojo = new CommonResponsePojo();
 
@@ -111,13 +142,6 @@ public class ProductServiceImpl implements ProductService {
         return commonResponsePojo;
     }
 
-    @Override
-    public ProductCategoryEntity getProductCategoryDetail(String categoryName, String parentCategoryName) throws Exception{
-        ProductCategoryEntity productCategory = productCategoryRepository.findByChildAndParentCategoryName(categoryName, parentCategoryName);
-        System.out.println(productCategory);
-
-        return productCategory;
-    }
 
     @Transactional
     @Override

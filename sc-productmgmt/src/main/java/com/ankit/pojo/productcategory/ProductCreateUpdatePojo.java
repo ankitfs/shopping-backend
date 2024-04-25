@@ -1,4 +1,4 @@
-package com.ankit.pojo;
+package com.ankit.pojo.productcategory;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
