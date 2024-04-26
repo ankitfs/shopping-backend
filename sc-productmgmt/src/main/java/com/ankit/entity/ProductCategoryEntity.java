@@ -29,7 +29,6 @@ public class ProductCategoryEntity {
     //@Column(name = "parent_id")
     //private Integer parentId;
 
-
     //Commenting the OneToMany Annotations since lot of hibernate queries being executed
 
     //Mapping to get list of categories with a single parentId
@@ -48,4 +47,9 @@ public class ProductCategoryEntity {
 
     @Column(name = "level")
     private Integer level;
+
+    //Below Constructor used for return ProductCategoryEntity bean for Parent of Current Category
+    public ProductCategoryEntity (Integer id) {
+        this.id = id;
+    }
 }

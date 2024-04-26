@@ -2,6 +2,8 @@ package com.ankit.service.impl;
 
 import com.ankit.dao.ProductCategoryRepository;
 import com.ankit.entity.ProductCategoryEntity;
+import com.ankit.exception.InvalidRequestException;
+import com.ankit.pojo.CommonResponsePojo;
 import com.ankit.pojo.productcategory.ProductCategoryPOJO;
 import com.ankit.service.ProductCategoryService;
 import org.slf4j.Logger;
@@ -42,5 +44,31 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
             categoriesPojoList.add(category);
         });
         return categoriesPojoList;
+    }
+
+    @Override
+    public CommonResponsePojo createCategory(ProductCategoryPOJO categoryPOJO) throws Exception {
+        CommonResponsePojo responsePojo = new CommonResponsePojo();
+
+        if(categoryPOJO.getCategoryName() == null || categoryPOJO.getCategoryName().isEmpty() ||
+           categoryPOJO.getParentCategoryId() == null || categoryPOJO.getParentCategoryId() > 0 ||
+           categoryPOJO.getLevel() == null || categoryPOJO.getLevel() < 0) {
+            throw new InvalidRequestException("Invalid Request Body");
+        }
+
+        // Validating if category name not exists and parent category exists and parent category level is correct
+        Boolean countCategory = productCategoryRepository.isExists(categoryPOJO.getCategoryName(), categoryPOJO.getParentCategoryId(), categoryPOJO.getLevel());
+        if(countCategory){
+            throw new InvalidRequestException("Requested Category Name already Exists");
+        }
+
+        ProductCategoryEntity categoryEntity = new ProductCategoryEntity();
+        categoryEntity.setName(categoryPOJO.getCategoryName());
+        categoryEntity.setParentId(new ProductCategoryEntity(categoryPOJO.getParentCategoryId()));
+        categoryEntity.setLevel(categoryPOJO.getLevel());
+
+        categoryEntity =  productCategoryRepository.save(categoryEntity);
+        responsePojo.setMessage("Product Category "+categoryPOJO.getCategoryName()+" has been created ");
+        return responsePojo;
     }
 }

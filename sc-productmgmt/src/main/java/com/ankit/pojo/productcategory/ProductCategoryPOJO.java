@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class ProductCategoryPOJO {
     private String categoryName;
     private String parentCategoryName;
+    private Integer parentCategoryId;
     private Integer level;
 
     public ProductCategoryPOJO(String categoryName, String parentCategoryName) {
