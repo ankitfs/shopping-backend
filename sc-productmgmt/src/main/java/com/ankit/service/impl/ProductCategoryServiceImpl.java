@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,9 +68,35 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         categoryEntity.setName(categoryPOJO.getCategoryName());
         categoryEntity.setParentId(new ProductCategoryEntity(categoryPOJO.getParentCategoryId()));
         categoryEntity.setLevel(categoryPOJO.getLevel());
+        categoryEntity.setCreatedAt(Timestamp.from(Instant.now()));
 
         categoryEntity =  productCategoryRepository.save(categoryEntity);
         responsePojo.setMessage("Product Category "+categoryPOJO.getCategoryName()+" has been created ");
         return responsePojo;
     }
+
+    @Override
+    public void deleteCategory(Integer categoryId, Integer level) throws Exception {
+        productCategoryRepository.deleteByIdandLevel(categoryId, level);
+    }
+
+    @Override
+    public CommonResponsePojo updateCategory(ProductCategoryPOJO categoryPOJO) throws Exception {
+        CommonResponsePojo responsePojo = new CommonResponsePojo();
+
+        ProductCategoryEntity categoryEntity = new ProductCategoryEntity();
+        categoryEntity.setName(categoryPOJO.getCategoryName());
+        categoryEntity.setParentId(new ProductCategoryEntity(categoryPOJO.getParentCategoryId()));
+        categoryEntity.setLevel(categoryPOJO.getLevel());
+        categoryEntity.setModifiedAt(Timestamp.from(Instant.now()));
+        categoryEntity.setActive(categoryPOJO.getActive());
+
+        categoryEntity = productCategoryRepository.save(categoryEntity);
+
+        responsePojo.setMessage("Category :" + categoryEntity.getName() + "\t has been updated");
+
+        return responsePojo;
+    }
+
+
 }

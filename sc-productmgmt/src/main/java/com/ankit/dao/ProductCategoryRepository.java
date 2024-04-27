@@ -16,4 +16,6 @@ public interface ProductCategoryRepository extends JpaRepository<ProductCategory
     @Query(nativeQuery = true, value = "select count(*) from product_category pc where pc.name = :name and pc.parent_id = :parentid and pc.level = :level")
     public boolean isExists(@Param(value = "name") String categoryName, @Param(value = "parentid") Integer parentId, @Param(value = "level") Integer level);
 
+    @Query(value = "delete from ProductCategoryRepository pcr where pcr.id = :catid and pcr.level = :level")
+    void deleteByIdandLevel(@Param("catid") Integer catid, @Param("level") Integer level);
 }

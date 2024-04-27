@@ -150,4 +150,31 @@ public class ProductServiceImpl implements ProductService {
         productRepository.deleteBySKU(productSKU);
 
     }
+
+    @Override
+    public CommonResponsePojo updateProduct(ProductCreateUpdatePojo createUpdatePojo) throws Exception {
+        CommonResponsePojo commonResponsePojo = new CommonResponsePojo();
+
+        ProductEntity productEntity = new ProductEntity();
+
+        productEntity.setName(createUpdatePojo.getName());
+        productEntity.setDescription(createUpdatePojo.getDescription());
+        productEntity.setSKU(createUpdatePojo.getSKU());
+        productEntity.setActive(createUpdatePojo.getActive());
+        productEntity.setPrice(createUpdatePojo.getPrice());
+
+        //getting product category id from request pojo
+        productEntity.setCategoryId(new ProductCategoryEntity(createUpdatePojo.getCategory().getCategoryId()));
+
+        ProductInventoryEntity productInventoryEntity = new ProductInventoryEntity(createUpdatePojo.getInventory());
+        productInventoryEntity.setModifiedAt(Timestamp.from(Instant.now()));
+
+        productEntity.setInventoryId(productInventoryEntity);
+
+        productEntity = productRepository.save(productEntity);
+
+        commonResponsePojo.setMessage("Product :"+createUpdatePojo.getName()+ "\t has been updated");
+
+        return commonResponsePojo;
+    }
 }

@@ -93,4 +93,21 @@ public class ProductController {
         return response;
     }
 
+    @PutMapping
+    public CommonResponsePojo updateProduct(@RequestBody ProductCreateUpdatePojo productPojo) throws Exception {
+        CommonResponsePojo responsePojo = new CommonResponsePojo();
+        try {
+            responsePojo = productService.updateProduct(productPojo);
+            responsePojo.setStatus(true);
+            responsePojo.setReturnCode(200);
+        }
+        catch (Exception ex) {
+            logger.error(ex.getMessage());
+            responsePojo.setStatus(false);
+            responsePojo.setReturnCode(500);
+            responsePojo.setMessage("Server Error");
+        }
+        return responsePojo;
+    }
+
 }

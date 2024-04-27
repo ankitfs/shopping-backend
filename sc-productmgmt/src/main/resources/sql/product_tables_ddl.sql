@@ -50,3 +50,6 @@ CREATE TABLE product (
 
 --Product_Category: Adding level column to show tree structure of the category
 ALTER TABLE product_category ADD LEVEL int;
+
+--27/2/24
+ALTER TABLE product_category ADD active boolean default false;

@@ -44,7 +44,7 @@ public class ProductCategoryController {
             logger.info("Category Bean : {}",categoryCreatePojo);
             commonResponse = productCategoryService.createCategory(categoryCreatePojo);
             commonResponse.setStatus(true);
-            commonResponse.setReturnCode(200);
+            commonResponse.setReturnCode(201);
         }
         catch (Exception ex) {
             logger.error(ex.getMessage());
@@ -55,8 +55,38 @@ public class ProductCategoryController {
         return commonResponse;
     }
 
-
-    //TODO:: Update Single Category
+    @PutMapping
+    public CommonResponsePojo updateCategoryHandler(@RequestBody ProductCategoryPOJO categoryPOJO) {
+        CommonResponsePojo responsePojo = new CommonResponsePojo();
+        try {
+            responsePojo = productCategoryService.updateCategory(categoryPOJO);
+            responsePojo.setStatus(true);
+            responsePojo.setReturnCode(200);
+        }
+        catch (Exception ex) {
+            logger.error(ex.getMessage());
+            responsePojo.setStatus(false);
+            responsePojo.setReturnCode(500);
+            responsePojo.setMessage("Server Error");
+        }
+        return responsePojo;
+    }
     
-    //TODO:: Delete Category
+    @DeleteMapping("/{categoryId}/level")
+    public CommonResponsePojo deleteCategoryHandler(@PathVariable("categoryId") Integer categoryId, @PathVariable("level") Integer level) {
+        CommonResponsePojo responsePojo = new CommonResponsePojo();
+        try {
+            productCategoryService.deleteCategory(categoryId, level);
+            responsePojo.setStatus(true);
+            responsePojo.setReturnCode(200);
+            responsePojo.setMessage("Category has been deleted");
+        }
+        catch (Exception ex) {
+            logger.error(ex.getMessage());
+            responsePojo.setStatus(false);
+            responsePojo.setReturnCode(500);
+            responsePojo.setMessage("Internal Server Error");
+        }
+        return null;
+    }
 }
