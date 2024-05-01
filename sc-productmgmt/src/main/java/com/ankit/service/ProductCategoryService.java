@@ -17,4 +17,6 @@ public interface ProductCategoryService {
     public void deleteCategory(Integer categoryId, Integer level) throws Exception;
 
     public CommonResponsePojo updateCategory(ProductCategoryPOJO categoryPOJO) throws Exception;
+
+    public List<ProductCategoryPOJO> getSubCategories(Integer parentCategoryId) throws Exception;
 }

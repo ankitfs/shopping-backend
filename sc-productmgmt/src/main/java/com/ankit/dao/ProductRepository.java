@@ -20,4 +20,8 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Integer>
     void deleteBySKU(String SKU);
 
     ProductEntity findBySKU(String SKU);
+
+    @Query(nativeQuery = true,value = "select pc.id,pc.name, pc.description,pc.sku,pc.category_id,pc.inventory_id,pc.price,pc.active, pc.created_at, pc.modified_at from product pc inner join product_category pcat on pc.category_id = pcat.id where pcat.parent_id = :categoryId")
+    //@Query(value = "select pce from ProductEntity pce where pce.categoryId.parentId.id = :categoryId")
+    List<ProductEntity> findByCategoryId(@Param("categoryId") Integer categoryId);
 }

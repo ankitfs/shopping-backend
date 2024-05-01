@@ -53,14 +53,14 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         CommonResponsePojo responsePojo = new CommonResponsePojo();
 
         if(categoryPOJO.getCategoryName() == null || categoryPOJO.getCategoryName().isEmpty() ||
-           categoryPOJO.getParentCategoryId() == null || categoryPOJO.getParentCategoryId() > 0 ||
+           categoryPOJO.getParentCategoryId() == null || categoryPOJO.getParentCategoryId() < 0 ||
            categoryPOJO.getLevel() == null || categoryPOJO.getLevel() < 0) {
             throw new InvalidRequestException("Invalid Request Body");
         }
 
         // Validating if category name not exists and parent category exists and parent category level is correct
-        Boolean countCategory = productCategoryRepository.isExists(categoryPOJO.getCategoryName(), categoryPOJO.getParentCategoryId(), categoryPOJO.getLevel());
-        if(countCategory){
+        Long countCategory = productCategoryRepository.isExists(categoryPOJO.getCategoryName(), categoryPOJO.getParentCategoryId(), categoryPOJO.getLevel());
+        if(countCategory != null && countCategory > 0){
             throw new InvalidRequestException("Requested Category Name already Exists");
         }
 
@@ -68,6 +68,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         categoryEntity.setName(categoryPOJO.getCategoryName());
         categoryEntity.setParentId(new ProductCategoryEntity(categoryPOJO.getParentCategoryId()));
         categoryEntity.setLevel(categoryPOJO.getLevel());
+        categoryEntity.setActive(categoryPOJO.getActive());
         categoryEntity.setCreatedAt(Timestamp.from(Instant.now()));
 
         categoryEntity =  productCategoryRepository.save(categoryEntity);
@@ -98,5 +99,22 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         return responsePojo;
     }
 
+    @Override
+    public List<ProductCategoryPOJO> getSubCategories(Integer parentCategoryId) throws Exception {
+        List<ProductCategoryPOJO> categoriesPojoList = new ArrayList<>();
+        ProductCategoryEntity parentEntity = new ProductCategoryEntity();
+        parentEntity.setParentId(new ProductCategoryEntity(parentCategoryId));
+        List<ProductCategoryEntity> categoryEntityList = productCategoryRepository.findByParentId(parentCategoryId);
 
+        logger.info("categories list from entity: {}", categoryEntityList);
+        categoryEntityList.forEach(categoryEntity -> {
+            ProductCategoryPOJO category = new ProductCategoryPOJO();
+            category.setCategoryName(categoryEntity.getName());
+            category.setParentCategoryName(categoryEntity.getParentId() != null ? categoryEntity.getParentId().getName() : null);
+            category.setLevel(categoryEntity.getLevel());
+            categoriesPojoList.add(category);
+        });
+        return categoriesPojoList;
+
+    }
 }

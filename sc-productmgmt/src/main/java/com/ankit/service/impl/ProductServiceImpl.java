@@ -7,6 +7,7 @@ import com.ankit.entity.ProductEntity;
 import com.ankit.entity.ProductInventoryEntity;
 import com.ankit.exception.InvalidRequestException;
 import com.ankit.pojo.*;
+import com.ankit.pojo.product.ProductDetailResponse;
 import com.ankit.pojo.product.ProductListResponse;
 import com.ankit.pojo.product.ProductResponsePOJO;
 import com.ankit.pojo.productcategory.ProductCategoryPOJO;
@@ -73,7 +74,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductResponsePOJO getProductDetail(String productSKU) throws Exception {
+    public ProductDetailResponse getProductDetail(String productSKU) throws Exception {
+        ProductDetailResponse productDetailResponse = new ProductDetailResponse();
         ProductResponsePOJO productPojo = new ProductResponsePOJO();
         ProductEntity productEntity1 = productRepository.findBySKU(productSKU);
         logger.info("Product Entity Details::{}",productEntity1);
@@ -88,7 +90,8 @@ public class ProductServiceImpl implements ProductService {
         productPojo.setActive(productEntity1.getActive());
         productPojo.setInventory(productEntity1.getInventoryId().getQuantity());
         productPojo.setCreationDate(productEntity1.getCreatedAt());
-        return productPojo;
+        productDetailResponse.setProductDetail(productPojo);
+        return productDetailResponse;
     }
 
     @Override
@@ -122,6 +125,7 @@ public class ProductServiceImpl implements ProductService {
         productEntity.setCategoryId(productCategoryEntity);
         productEntity.setActive(createUpdatePojo.getActive());
         productEntity.setPrice(createUpdatePojo.getPrice());
+
 
         ProductInventoryEntity productInventoryEntity = new ProductInventoryEntity(createUpdatePojo.getInventory());
         productInventoryEntity.setCreatedAt(Timestamp.from(Instant.now()));
@@ -176,5 +180,30 @@ public class ProductServiceImpl implements ProductService {
         commonResponsePojo.setMessage("Product :"+createUpdatePojo.getName()+ "\t has been updated");
 
         return commonResponsePojo;
+    }
+
+    @Override
+    public ProductListResponse getAllProductsByCategory(Integer categoryId) throws Exception {
+        ProductListResponse productListResponse = new ProductListResponse();
+        List<ProductResponsePOJO> productList = new ArrayList<>();
+        List<ProductEntity> productEntityList = productRepository.findByCategoryId(categoryId);
+        if(!productEntityList.isEmpty()) {
+            productEntityList.forEach(productEntity -> {
+                ProductResponsePOJO product = new ProductResponsePOJO();
+                product.setPid(productEntity.getId());
+                product.setPname(productEntity.getName());
+                product.setPSKU(productEntity.getSKU());
+//            product.setCategory(new ProductCategoryPOJO(
+//                    productEntity.getCategoryId().getName(),
+//                    productEntity.getCategoryId().getParentId().getName()));
+                product.setPrice(productEntity.getPrice());
+                product.setActive(productEntity.getActive());
+                product.setInventory(productEntity.getInventoryId().getQuantity());
+                product.setCreationDate(productEntity.getCreatedAt());
+                productList.add(product);
+            });
+        }
+        productListResponse.setProductsList(productList);
+        return productListResponse;
     }
 }

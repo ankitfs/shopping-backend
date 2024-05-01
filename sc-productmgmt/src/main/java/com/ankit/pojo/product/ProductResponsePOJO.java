@@ -12,7 +12,7 @@ import java.sql.Timestamp;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductResponsePOJO extends CommonResponsePojo {
+public class ProductResponsePOJO {
     private int pid;
     private String pname;
     private String pdescription;

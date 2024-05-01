@@ -1,6 +1,7 @@
 package com.ankit.controller;
 
 import com.ankit.pojo.CommonResponsePojo;
+import com.ankit.pojo.product.ProductDetailResponse;
 import com.ankit.pojo.productcategory.ProductCreateUpdatePojo;
 import com.ankit.pojo.product.ProductListResponse;
 import com.ankit.pojo.product.ProductResponsePOJO;
@@ -39,8 +40,8 @@ public class ProductController {
 
     //API for getting single product details
     @GetMapping("/{sku}")
-    public ProductResponsePOJO getProductDetail(String productSKU) {
-        ProductResponsePOJO productPojo = null;
+    public ProductDetailResponse getProductDetail(String productSKU) {
+        ProductDetailResponse productPojo = null;
         try {
             productPojo = productService.getProductDetail(productSKU);
             productPojo.setStatus(true);
@@ -110,4 +111,19 @@ public class ProductController {
         return responsePojo;
     }
 
+    @GetMapping("/list/{categoryId}")
+    public ProductListResponse getAllProductsByCategory(@PathVariable("categoryId") Integer categoryId) {
+        ProductListResponse productListResponse = new ProductListResponse();;
+        try {
+            productListResponse = productService.getAllProductsByCategory(categoryId);
+            productListResponse.setStatus(true);
+            productListResponse.setReturnCode(200);
+        }
+        catch (Exception ex) {
+            productListResponse.setStatus(false);
+            productListResponse.setReturnCode(500);
+            productListResponse.setMessage("Server Error");
+        }
+        return productListResponse;
+    }
 }

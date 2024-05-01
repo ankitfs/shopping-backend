@@ -89,4 +89,21 @@ public class ProductCategoryController {
         }
         return null;
     }
+
+    @GetMapping("/{parentId}")
+    public ProductCategoryList getSubCategories(@PathVariable("parentId") Integer parentId) {
+        ProductCategoryList categoryList = new ProductCategoryList();
+        try {
+            categoryList.setCategoryList(productCategoryService.getSubCategories(parentId));
+            categoryList.setStatus(true);
+            categoryList.setReturnCode(200);
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+            categoryList.setStatus(false);
+            categoryList.setReturnCode(500);
+            categoryList.setMessage("Server Error");
+        }
+        return categoryList;
+    }
 }

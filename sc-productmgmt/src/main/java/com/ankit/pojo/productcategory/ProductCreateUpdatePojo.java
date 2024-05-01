@@ -19,5 +19,6 @@ public class ProductCreateUpdatePojo {
     private BigDecimal price;
     private Boolean active;
     private String SKU;
+    private Integer level;
 
 }

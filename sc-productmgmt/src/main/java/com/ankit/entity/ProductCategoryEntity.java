@@ -45,7 +45,7 @@ public class ProductCategoryEntity {
     @Column(name = "modified_at")
     private Timestamp modifiedAt;
 
-    @Column(name = "level")
+    @Column(name = "category_level")
     private Integer level;
 
     //Below Constructor used for return ProductCategoryEntity bean for Parent of Current Category
