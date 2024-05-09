@@ -53,3 +53,13 @@ ALTER TABLE product_category ADD category_level int;
 
 --27/2/24
 ALTER TABLE product_category ADD active boolean default false;
+
+--7/5/24
+--Adding images column for storing s3 image path
+alter table product add short_image varchar(1000);
+alter table product add image1 varchar(1000);
+alter table product add image2 varchar(1000);
+
+comment on column product.short_image is 'column used for storing thumbnail image';
+comment on column product.image1 is 'column used for storing model image';
+comment on column product.image2 is 'column used for storing real image';

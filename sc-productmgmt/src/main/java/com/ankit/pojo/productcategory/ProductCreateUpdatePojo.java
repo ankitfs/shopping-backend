@@ -3,6 +3,7 @@ package com.ankit.pojo.productcategory;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 
@@ -18,7 +19,12 @@ public class ProductCreateUpdatePojo {
     private Integer inventory;
     private BigDecimal price;
     private Boolean active;
-    private String SKU;
+    private String stockUnit;
     private Integer level;
 
+
+    //Different Images of Product
+    private MultipartFile thumbnailImage;
+    private MultipartFile modelImage;
+    private MultipartFile realImage;
 }

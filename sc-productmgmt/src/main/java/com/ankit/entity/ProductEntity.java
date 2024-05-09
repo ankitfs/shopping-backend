@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -12,6 +13,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "product")
+@DynamicUpdate
 public class ProductEntity {
 
     @Id
@@ -48,4 +50,13 @@ public class ProductEntity {
 
     @Column(name = "modified_at")
     private Timestamp modifiedAt;
+
+    @Column(name = "short_image")
+    private String thumbnailImagePath;
+
+    @Column(name = "image1")
+    private String modelImagePath;
+
+    @Column(name = "image2")
+    private String realImagePath;
 }

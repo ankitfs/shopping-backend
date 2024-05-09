@@ -15,11 +15,14 @@ import com.ankit.pojo.productcategory.ProductCreateUpdatePojo;
 import com.ankit.service.ProductCategoryService;
 import com.ankit.service.ProductService;
 import com.ankit.utility.HelperMethods;
+import com.ankit.utility.S3ClientFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import software.amazon.awssdk.services.s3.model.ListBucketsRequest;
+import software.amazon.awssdk.services.s3.model.ListBucketsResponse;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -40,6 +43,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductCategoryRepository productCategoryRepository;
+
+    @Autowired
+    private S3ClientFactory s3ClientFactory;
+
+    private final String s3BucketName = "my-developer-bucket-v1";
+    private String s3ImagePath = null;
 
     @Override
     public ProductListResponse getAllProducts() throws Exception {
@@ -69,6 +78,11 @@ public class ProductServiceImpl implements ProductService {
         productListResponse.setProductsList(productsList);
         productListResponse.setStatus(true);
         productListResponse.setReturnCode(200);
+
+        // List buckets
+        ListBucketsRequest listBucketsRequest = ListBucketsRequest.builder().build();
+        ListBucketsResponse listBucketsResponse = s3ClientFactory.getS3Client().listBuckets(listBucketsRequest);
+        listBucketsResponse.buckets().stream().forEach(x -> System.out.println(x.name()));
 
         return productListResponse;
     }
@@ -159,21 +173,58 @@ public class ProductServiceImpl implements ProductService {
     public CommonResponsePojo updateProduct(ProductCreateUpdatePojo createUpdatePojo) throws Exception {
         CommonResponsePojo commonResponsePojo = new CommonResponsePojo();
 
-        ProductEntity productEntity = new ProductEntity();
+        ProductEntity productEntity = productRepository.findBySKU(createUpdatePojo.getStockUnit());
 
-        productEntity.setName(createUpdatePojo.getName());
-        productEntity.setDescription(createUpdatePojo.getDescription());
-        productEntity.setSKU(createUpdatePojo.getSKU());
-        productEntity.setActive(createUpdatePojo.getActive());
-        productEntity.setPrice(createUpdatePojo.getPrice());
+        if(productEntity == null) {
+            //TODO:: Throw Invalid Product Exception
+            throw new InvalidRequestException("product doesn't exist by sku id:"+createUpdatePojo.getStockUnit());
+        }
+
+        if(createUpdatePojo.getName() != null) {
+            productEntity.setName(createUpdatePojo.getName());
+        }
+
+        if(createUpdatePojo.getDescription() != null) {
+            productEntity.setDescription(createUpdatePojo.getDescription());
+        }
+
+        if(createUpdatePojo.getActive() != null) {
+            productEntity.setActive(createUpdatePojo.getActive());
+        }
+
+        if(createUpdatePojo.getPrice() != null) {
+            productEntity.setPrice(createUpdatePojo.getPrice());
+        }
 
         //getting product category id from request pojo
-        productEntity.setCategoryId(new ProductCategoryEntity(createUpdatePojo.getCategory().getCategoryId()));
+        if(createUpdatePojo.getCategory() != null && createUpdatePojo.getCategory().getCategoryId() != null) {
+            productEntity.setCategoryId(new ProductCategoryEntity(createUpdatePojo.getCategory().getCategoryId()));
+        }
 
-        ProductInventoryEntity productInventoryEntity = new ProductInventoryEntity(createUpdatePojo.getInventory());
-        productInventoryEntity.setModifiedAt(Timestamp.from(Instant.now()));
+        if (createUpdatePojo.getInventory() != null) {
+            ProductInventoryEntity productInventoryEntity = new ProductInventoryEntity(createUpdatePojo.getInventory());
+            productInventoryEntity.setModifiedAt(Timestamp.from(Instant.now()));
 
-        productEntity.setInventoryId(productInventoryEntity);
+            productEntity.setInventoryId(productInventoryEntity);
+        }
+
+        if(createUpdatePojo.getThumbnailImage() != null && !createUpdatePojo.getThumbnailImage().isEmpty()) {
+            s3ImagePath = s3ClientFactory.uploadImageToS3(s3BucketName, createUpdatePojo.getThumbnailImage());
+
+            productEntity.setThumbnailImagePath(s3ImagePath);
+        }
+
+        if (createUpdatePojo.getModelImage() != null && !createUpdatePojo.getModelImage().isEmpty()) {
+           s3ImagePath = s3ClientFactory.uploadImageToS3(s3BucketName, createUpdatePojo.getModelImage());
+
+           productEntity.setModelImagePath(s3ImagePath);
+        }
+
+        if(createUpdatePojo.getRealImage() != null && !createUpdatePojo.getRealImage().isEmpty()) {
+            s3ImagePath = s3ClientFactory.uploadImageToS3(s3BucketName, createUpdatePojo.getRealImage());
+
+            productEntity.setRealImagePath(s3ImagePath);
+        }
 
         productEntity = productRepository.save(productEntity);
 

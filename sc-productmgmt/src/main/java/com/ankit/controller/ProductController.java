@@ -9,7 +9,9 @@ import com.ankit.service.impl.ProductServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/product")
@@ -94,10 +96,16 @@ public class ProductController {
         return response;
     }
 
-    @PutMapping
-    public CommonResponsePojo updateProduct(@RequestBody ProductCreateUpdatePojo productPojo) throws Exception {
+    @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public CommonResponsePojo updateProduct(@RequestPart("data") ProductCreateUpdatePojo productPojo,
+                                            @RequestPart("thumbnailImage") MultipartFile thumbnailImage,
+                                            @RequestPart("modelImage") MultipartFile modelImage,
+                                            @RequestPart("realImage") MultipartFile realImage) throws Exception {
         CommonResponsePojo responsePojo = new CommonResponsePojo();
         try {
+            productPojo.setThumbnailImage(thumbnailImage);
+            productPojo.setModelImage(modelImage);
+            productPojo.setRealImage(realImage);
             responsePojo = productService.updateProduct(productPojo);
             responsePojo.setStatus(true);
             responsePojo.setReturnCode(200);
@@ -126,4 +134,6 @@ public class ProductController {
         }
         return productListResponse;
     }
+
+
 }
