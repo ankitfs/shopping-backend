@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import software.amazon.awssdk.services.s3.model.ListBucketsRequest;
 import software.amazon.awssdk.services.s3.model.ListBucketsResponse;
+import software.amazon.awssdk.utils.StringUtils;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -146,6 +147,24 @@ public class ProductServiceImpl implements ProductService {
 
         productEntity.setInventoryId(productInventoryEntity);
 
+        if(createUpdatePojo.getThumbnailImage() != null && !createUpdatePojo.getThumbnailImage().isEmpty()) {
+            s3ImagePath = s3ClientFactory.uploadImageToS3(s3BucketName, createUpdatePojo.getThumbnailImage());
+
+            productEntity.setThumbnailImagePath(s3ImagePath);
+        }
+
+        if (createUpdatePojo.getModelImage() != null && !createUpdatePojo.getModelImage().isEmpty()) {
+            s3ImagePath = s3ClientFactory.uploadImageToS3(s3BucketName, createUpdatePojo.getModelImage());
+
+            productEntity.setModelImagePath(s3ImagePath);
+        }
+
+        if(createUpdatePojo.getRealImage() != null && !createUpdatePojo.getRealImage().isEmpty()) {
+            s3ImagePath = s3ClientFactory.uploadImageToS3(s3BucketName, createUpdatePojo.getRealImage());
+
+            productEntity.setRealImagePath(s3ImagePath);
+        }
+
         productEntity = productRepository.save(productEntity);
         logger.info("Product has been created with ID:"+productEntity.getId());
 
@@ -164,6 +183,20 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     @Override
     public void deleteProduct(String productSKU) throws Exception {
+
+        ProductEntity productEntity = productRepository.findBySKU(productSKU);
+
+        if(!StringUtils.isEmpty(productEntity.getThumbnailImagePath())) {
+            s3ClientFactory.deleteImageFromS3(s3BucketName, productEntity.getThumbnailImagePath());
+        }
+
+        if(!StringUtils.isEmpty(productEntity.getModelImagePath())) {
+            s3ClientFactory.deleteImageFromS3(s3BucketName, productEntity.getModelImagePath());
+        }
+
+        if(!StringUtils.isEmpty(productEntity.getRealImagePath())) {
+            s3ClientFactory.deleteImageFromS3(s3BucketName, productEntity.getRealImagePath());
+        }
 
         productRepository.deleteBySKU(productSKU);
 

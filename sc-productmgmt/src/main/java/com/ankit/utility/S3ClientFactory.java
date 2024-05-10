@@ -6,6 +6,7 @@ import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.util.HashMap;
@@ -42,4 +43,14 @@ public class S3ClientFactory {
         return s3ImagePath;
     }
 
+    public void deleteImageFromS3(String bucketName, String fileName) throws Exception {
+
+        S3Client s3Client = getS3Client();
+
+        DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                                                    .bucket(bucketName)
+                                                    .key(fileName)
+                                                    .build();
+        s3Client.deleteObject(deleteObjectRequest);
+    }
 }

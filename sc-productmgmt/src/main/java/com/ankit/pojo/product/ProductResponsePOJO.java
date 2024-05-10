@@ -1,6 +1,5 @@
 package com.ankit.pojo.product;
 
-import com.ankit.pojo.CommonResponsePojo;
 import com.ankit.pojo.productcategory.ProductCategoryPOJO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,5 +22,9 @@ public class ProductResponsePOJO {
     private BigDecimal discount;
     private boolean active;
     private Timestamp creationDate;
+
+    private String thumbnailImagePath;
+    private String modelImagePath;
+    private String realImagePath;
 }
 
