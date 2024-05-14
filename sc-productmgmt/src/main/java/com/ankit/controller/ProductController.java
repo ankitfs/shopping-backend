@@ -22,7 +22,7 @@ public class ProductController {
     @Autowired
     private ProductServiceImpl productService;
 
-    //Getting all products
+    //API for Getting all products
     @GetMapping("/all")
     public ProductListResponse getProductsList(){
         logger.info("Entered");
@@ -40,7 +40,7 @@ public class ProductController {
         return productListResponse;
     }
 
-    //API for getting single product details
+    //API for Getting Product Details
     @GetMapping("/{sku}")
     public ProductDetailResponse getProductDetail(String productSKU) {
         ProductDetailResponse productPojo = null;
@@ -58,12 +58,18 @@ public class ProductController {
         return productPojo;
     }
 
-    //Handle Product Creation Request
-    @PostMapping
-    public CommonResponsePojo createProduct(@RequestBody ProductCreateUpdatePojo request){
+    //API for Creating a New Product
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public CommonResponsePojo createProduct(@RequestPart("data") ProductCreateUpdatePojo request,
+                                            @RequestPart("thumbnailImage") MultipartFile thumbnailImage,
+                                            @RequestPart("modelImage") MultipartFile modelImage,
+                                            @RequestPart("realImage") MultipartFile realImage){
         logger.info("Entered");
         CommonResponsePojo response = null;
         try {
+            request.setThumbnailImage(thumbnailImage);
+            request.setModelImage(modelImage);
+            request.setRealImage(realImage);
             response = productService.createProduct(request);
         }
         catch (Exception ex) {
@@ -77,6 +83,7 @@ public class ProductController {
         return response;
     }
 
+    //API for Deleting an Existing Product by SKU
     @DeleteMapping(value = "/{sku}")
     public CommonResponsePojo deleteProduct(@PathVariable("sku") String productSKU) {
         logger.info("Entered");
@@ -96,6 +103,7 @@ public class ProductController {
         return response;
     }
 
+    //API for Updating an Existing Product
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public CommonResponsePojo updateProduct(@RequestPart("data") ProductCreateUpdatePojo productPojo,
                                             @RequestPart("thumbnailImage") MultipartFile thumbnailImage,
@@ -119,6 +127,7 @@ public class ProductController {
         return responsePojo;
     }
 
+    //API for Getting All Products for a Category
     @GetMapping("/list/{categoryId}")
     public ProductListResponse getAllProductsByCategory(@PathVariable("categoryId") Integer categoryId) {
         ProductListResponse productListResponse = new ProductListResponse();;

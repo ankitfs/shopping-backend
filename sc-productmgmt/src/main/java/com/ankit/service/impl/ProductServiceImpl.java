@@ -187,6 +187,7 @@ public class ProductServiceImpl implements ProductService {
         ProductEntity productEntity = productRepository.findBySKU(productSKU);
 
         if(!StringUtils.isEmpty(productEntity.getThumbnailImagePath())) {
+            logger.debug("image to be deleted : {}",productEntity.getThumbnailImagePath());
             s3ClientFactory.deleteImageFromS3(s3BucketName, productEntity.getThumbnailImagePath());
         }
 
@@ -209,7 +210,7 @@ public class ProductServiceImpl implements ProductService {
         ProductEntity productEntity = productRepository.findBySKU(createUpdatePojo.getStockUnit());
 
         if(productEntity == null) {
-            //TODO:: Throw Invalid Product Exception
+            //Throw Invalid Product Exception
             throw new InvalidRequestException("product doesn't exist by sku id:"+createUpdatePojo.getStockUnit());
         }
 
@@ -241,6 +242,8 @@ public class ProductServiceImpl implements ProductService {
             productEntity.setInventoryId(productInventoryEntity);
         }
 
+        //TODO:: ADD SERVER SIDE VALIDATION OF INVALID IMAGE TYPE OR INVALID IMAGE SIZE
+
         if(createUpdatePojo.getThumbnailImage() != null && !createUpdatePojo.getThumbnailImage().isEmpty()) {
             s3ImagePath = s3ClientFactory.uploadImageToS3(s3BucketName, createUpdatePojo.getThumbnailImage());
 
@@ -261,7 +264,7 @@ public class ProductServiceImpl implements ProductService {
 
         productEntity = productRepository.save(productEntity);
 
-        commonResponsePojo.setMessage("Product :"+createUpdatePojo.getName()+ "\t has been updated");
+        commonResponsePojo.setMessage("Product :"+createUpdatePojo.getStockUnit()+ " has been updated");
 
         return commonResponsePojo;
     }
@@ -277,13 +280,14 @@ public class ProductServiceImpl implements ProductService {
                 product.setPid(productEntity.getId());
                 product.setPname(productEntity.getName());
                 product.setPSKU(productEntity.getSKU());
-//            product.setCategory(new ProductCategoryPOJO(
-//                    productEntity.getCategoryId().getName(),
-//                    productEntity.getCategoryId().getParentId().getName()));
+                product.setCategory(new ProductCategoryPOJO(
+                        productEntity.getCategoryId().getName(),
+                        productEntity.getCategoryId().getParentId().getName()));
                 product.setPrice(productEntity.getPrice());
                 product.setActive(productEntity.getActive());
                 product.setInventory(productEntity.getInventoryId().getQuantity());
                 product.setCreationDate(productEntity.getCreatedAt());
+                product.setThumbnailImagePath(productEntity.getThumbnailImagePath());
                 productList.add(product);
             });
         }

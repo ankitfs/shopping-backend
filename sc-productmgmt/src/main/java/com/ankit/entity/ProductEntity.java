@@ -56,9 +56,9 @@ public class ProductEntity {
     @Column(name = "short_image")
     private String thumbnailImagePath;
 
-    @Column(name = "image1")
+    @Column(name = "model_image")
     private String modelImagePath;
 
-    @Column(name = "image2")
+    @Column(name = "real_image")
     private String realImagePath;
 }

@@ -1,5 +1,7 @@
 package com.ankit.utility;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
@@ -7,6 +9,7 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.DeleteObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.util.HashMap;
@@ -14,6 +17,8 @@ import java.util.Map;
 
 @Configuration
 public class S3ClientFactory {
+
+    private static final Logger logger = LoggerFactory.getLogger(S3ClientFactory.class);
 
     public S3Client getS3Client() throws Exception{
         ProfileCredentialsProvider profileCredentialsProvider = ProfileCredentialsProvider.create();
@@ -40,7 +45,7 @@ public class S3ClientFactory {
         s3Client.putObject(putObjectRequest, RequestBody.fromBytes(imageMultiPart.getBytes()));
 
 
-        return s3ImagePath;
+        return fileName;
     }
 
     public void deleteImageFromS3(String bucketName, String fileName) throws Exception {
@@ -51,6 +56,8 @@ public class S3ClientFactory {
                                                     .bucket(bucketName)
                                                     .key(fileName)
                                                     .build();
-        s3Client.deleteObject(deleteObjectRequest);
+        DeleteObjectResponse deleteObjectResponse = s3Client.deleteObject(deleteObjectRequest);
+
+        logger.debug(deleteObjectResponse.toString());
     }
 }
