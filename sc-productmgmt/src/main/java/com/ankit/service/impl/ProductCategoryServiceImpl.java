@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.NumberUtils;
+import software.amazon.awssdk.utils.StringUtils;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -40,6 +42,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         logger.info("categories list from entity: {}", categoryEntityList);
         categoryEntityList.forEach(categoryEntity -> {
             ProductCategoryPOJO category = new ProductCategoryPOJO();
+            category.setCategoryId(categoryEntity.getId());
             category.setCategoryName(categoryEntity.getName());
             category.setParentCategoryName(categoryEntity.getParentId() != null ? categoryEntity.getParentId().getName() : null);
             category.setLevel(categoryEntity.getLevel());
@@ -52,9 +55,9 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
     public CommonResponsePojo createCategory(ProductCategoryPOJO categoryPOJO) throws Exception {
         CommonResponsePojo responsePojo = new CommonResponsePojo();
 
-        if(categoryPOJO.getCategoryName() == null || categoryPOJO.getCategoryName().isEmpty() ||
-           categoryPOJO.getParentCategoryId() == null || categoryPOJO.getParentCategoryId() < 0 ||
-           categoryPOJO.getLevel() == null || categoryPOJO.getLevel() < 0) {
+        if(StringUtils.isEmpty(categoryPOJO.getCategoryName()) ||
+        (categoryPOJO.getLevel() > 0 && categoryPOJO.getParentCategoryId() < 1))    //Checking if request category level is root
+        {
             throw new InvalidRequestException("Invalid Request Body");
         }
 
@@ -66,10 +69,17 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 
         ProductCategoryEntity categoryEntity = new ProductCategoryEntity();
         categoryEntity.setName(categoryPOJO.getCategoryName());
-        categoryEntity.setParentId(new ProductCategoryEntity(categoryPOJO.getParentCategoryId()));
+
+        if(categoryPOJO.getParentCategoryId() != null) {
+            ProductCategoryEntity parentObj = new ProductCategoryEntity();
+            parentObj.setId(categoryPOJO.getParentCategoryId());
+            categoryEntity.setParentId(parentObj);
+        }
         categoryEntity.setLevel(categoryPOJO.getLevel());
         categoryEntity.setActive(categoryPOJO.getActive());
         categoryEntity.setCreatedAt(Timestamp.from(Instant.now()));
+
+        logger.debug("CategoryEntity :{}",categoryEntity);
 
         categoryEntity =  productCategoryRepository.save(categoryEntity);
         responsePojo.setMessage("Product Category "+categoryPOJO.getCategoryName()+" has been created ");
@@ -77,8 +87,23 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
     }
 
     @Override
-    public void deleteCategory(Integer categoryId, Integer level) throws Exception {
-        productCategoryRepository.deleteByIdandLevel(categoryId, level);
+    public CommonResponsePojo deleteCategory(Integer categoryId, Integer level) throws Exception {
+        CommonResponsePojo commonResponsePojo = new CommonResponsePojo();
+        //Checking whether category have any dependency
+        List<ProductCategoryEntity> productCategoryList = productCategoryRepository.findByParentId(categoryId);
+
+        if(productCategoryList != null && !productCategoryList.isEmpty()) {
+            commonResponsePojo.setStatus(false);
+            commonResponsePojo.setMessage("This Category is not empty. Kindly first delete child for this category");
+        }
+        else {
+            productCategoryRepository.deleteByIdandLevel(categoryId, level);
+            commonResponsePojo.setStatus(true);
+            commonResponsePojo.setReturnCode(200);
+            commonResponsePojo.setMessage("Category has been deleted");
+        }
+
+        return commonResponsePojo;
     }
 
     @Override
@@ -109,6 +134,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         logger.info("categories list from entity: {}", categoryEntityList);
         categoryEntityList.forEach(categoryEntity -> {
             ProductCategoryPOJO category = new ProductCategoryPOJO();
+            category.setCategoryId(categoryEntity.getId());
             category.setCategoryName(categoryEntity.getName());
             category.setParentCategoryName(categoryEntity.getParentId() != null ? categoryEntity.getParentId().getName() : null);
             category.setLevel(categoryEntity.getLevel());

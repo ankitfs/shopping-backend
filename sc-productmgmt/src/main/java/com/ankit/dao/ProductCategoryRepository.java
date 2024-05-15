@@ -2,6 +2,7 @@ package com.ankit.dao;
 
 import com.ankit.entity.ProductCategoryEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -18,6 +19,7 @@ public interface ProductCategoryRepository extends JpaRepository<ProductCategory
     @Query(nativeQuery = true, value = "select count(*) from product_category pc where pc.name = :name and pc.parent_id = :parentid and pc.category_level = :level")
     public Long isExists(@Param(value = "name") String categoryName, @Param(value = "parentid") Integer parentId, @Param(value = "level") Integer level);
 
+    @Modifying
     @Query(nativeQuery = true, value = "delete from product_category pcr where pcr.id = :catid and pcr.category_level = :level")
     void deleteByIdandLevel(@Param("catid") Integer catid, @Param("level") Integer level);
 

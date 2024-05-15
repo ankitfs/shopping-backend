@@ -18,9 +18,9 @@ public class ProductCategoryController {
     @Autowired
     private ProductCategoryService productCategoryService;
 
-    //Get All Categories
+    //API for Getting All Categories
     @GetMapping("/all")
-    public ProductCategoryList getAlCategories() {
+    public ProductCategoryList getAllCategories() {
         ProductCategoryList categoryList = new ProductCategoryList();
         try {
             categoryList.setCategoryList(productCategoryService.getAllCategories());
@@ -36,6 +36,7 @@ public class ProductCategoryController {
         return categoryList;
     }
 
+    //API for creating a new category
     @PostMapping
     public CommonResponsePojo createProductCategory(@RequestBody ProductCategoryPOJO categoryCreatePojo){
         logger.info("Entered");
@@ -55,6 +56,7 @@ public class ProductCategoryController {
         return commonResponse;
     }
 
+    //API for updating a category
     @PutMapping
     public CommonResponsePojo updateCategoryHandler(@RequestBody ProductCategoryPOJO categoryPOJO) {
         CommonResponsePojo responsePojo = new CommonResponsePojo();
@@ -71,15 +73,13 @@ public class ProductCategoryController {
         }
         return responsePojo;
     }
-    
-    @DeleteMapping("/{categoryId}/level")
+
+    //API for deleting a category
+    @DeleteMapping("/{categoryId}/{level}")
     public CommonResponsePojo deleteCategoryHandler(@PathVariable("categoryId") Integer categoryId, @PathVariable("level") Integer level) {
         CommonResponsePojo responsePojo = new CommonResponsePojo();
         try {
-            productCategoryService.deleteCategory(categoryId, level);
-            responsePojo.setStatus(true);
-            responsePojo.setReturnCode(200);
-            responsePojo.setMessage("Category has been deleted");
+           responsePojo = productCategoryService.deleteCategory(categoryId, level);
         }
         catch (Exception ex) {
             logger.error(ex.getMessage());
@@ -87,9 +87,10 @@ public class ProductCategoryController {
             responsePojo.setReturnCode(500);
             responsePojo.setMessage("Internal Server Error");
         }
-        return null;
+        return responsePojo;
     }
 
+    //API for getting subcategory
     @GetMapping("/{parentId}")
     public ProductCategoryList getSubCategories(@PathVariable("parentId") Integer parentId) {
         ProductCategoryList categoryList = new ProductCategoryList();

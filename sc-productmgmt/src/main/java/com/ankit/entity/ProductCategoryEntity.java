@@ -23,7 +23,7 @@ public class ProductCategoryEntity {
     private Boolean active;
 
     //Mapping to define the multiple categories associated with single parent category
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "parent_id", referencedColumnName = "id")
     private ProductCategoryEntity parentId;
     //@Column(name = "parent_id")
