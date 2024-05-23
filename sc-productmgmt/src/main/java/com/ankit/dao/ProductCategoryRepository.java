@@ -25,4 +25,7 @@ public interface ProductCategoryRepository extends JpaRepository<ProductCategory
 
     @Query(nativeQuery = true, value = "select pce.id, pce.name, pce.description, pce.active, pce.created_at, pce.modified_at, pce.parent_id, pce.category_level from product_category pce where pce.parent_id= :parentId ")
     public List<ProductCategoryEntity> findByParentId(@Param("parentId") Integer parentEntity);
+
+    @Query(value = "select pc from product_category pc where pc.level = 0")
+    public List<ProductCategoryEntity> findParentCategories();
 }

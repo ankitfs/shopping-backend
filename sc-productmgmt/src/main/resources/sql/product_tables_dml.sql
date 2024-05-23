@@ -14,3 +14,7 @@ update product set inventory_id = 1, discount_id =1  where id=1;
 update product_category set level = 0 where id=1;
 update product_category set level = 1  where id=2;
 
+------------------------------------------------------------------------------------------------
+
+--admin_type table
+insert into admin_type (admin_type, permissions, created_at) values (1,'BOTH', now());

@@ -64,3 +64,20 @@ comment on column product.short_image is 'column used for storing thumbnail imag
 comment on column product.model_image is 'column used for storing model image';
 comment on column product.real_image is 'column used for storing real image';
 
+
+---------------
+
+--20/5/24
+
+CREATE TABLE public.adminuser (
+	id serial4 NOT NULL,
+	username varchar(50) NOT NULL,
+	pwd text NOT NULL,
+	first_name varchar(50) NOT NULL,
+	last_name varchar(50) NOT NULL,
+	last_login timestamp NULL,
+	created_at timestamp NOT NULL,
+	modified_at timestamp NULL,
+	CONSTRAINT pk_adminuser PRIMARY KEY (id)
+);
+

@@ -38,8 +38,8 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
     @Override
     public List<ProductCategoryPOJO> getAllCategories() throws Exception{
         List<ProductCategoryPOJO> categoriesPojoList = new ArrayList<>();
-        List<ProductCategoryEntity> categoryEntityList = productCategoryRepository.findAll();
-        logger.info("categories list from entity: {}", categoryEntityList);
+        List<ProductCategoryEntity> categoryEntityList = productCategoryRepository.findParentCategories();
+        logger.info("top level categories list from entity: {}", categoryEntityList);
         categoryEntityList.forEach(categoryEntity -> {
             ProductCategoryPOJO category = new ProductCategoryPOJO();
             category.setCategoryId(categoryEntity.getId());

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/product/category")
 public class ProductCategoryController {
 
@@ -18,9 +19,9 @@ public class ProductCategoryController {
     @Autowired
     private ProductCategoryService productCategoryService;
 
-    //API for Getting All Categories
+    //API for Getting All Top Level Categories
     @GetMapping("/all")
-    public ProductCategoryList getAllCategories() {
+    public ProductCategoryList getAllParentCategories() {
         ProductCategoryList categoryList = new ProductCategoryList();
         try {
             categoryList.setCategoryList(productCategoryService.getAllCategories());
