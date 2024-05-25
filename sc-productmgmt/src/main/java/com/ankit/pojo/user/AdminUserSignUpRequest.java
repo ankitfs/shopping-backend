@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AdminUserPojo {
+public class AdminUserSignUpRequest {
 
     private String userName;
     private String password;

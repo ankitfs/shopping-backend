@@ -2,7 +2,7 @@ package com.ankit.controller;
 
 import com.ankit.entity.user.AdminUserEntity;
 import com.ankit.pojo.CommonResponsePojo;
-import com.ankit.pojo.user.AdminUserPojo;
+import com.ankit.pojo.user.AdminUserSignUpRequest;
 import com.ankit.service.AdminUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,12 +18,12 @@ public class AdminUserController {
     private AdminUserService adminUserService;
 
     @PostMapping("/create")
-    public CommonResponsePojo createAdminUser(@RequestBody AdminUserPojo adminUserPojo) {
+    public CommonResponsePojo createAdminUser(@RequestBody AdminUserSignUpRequest adminUserSignUpRequest) {
 
         CommonResponsePojo response = new CommonResponsePojo();
 
         try {
-            AdminUserEntity adminUserEntity = adminUserService.createAdminUser(adminUserPojo);
+            AdminUserEntity adminUserEntity = adminUserService.createAdminUser(adminUserSignUpRequest);
             response.setStatus(true);
             response.setReturnCode(201);
             response.setMessage("Admin User has been created");
