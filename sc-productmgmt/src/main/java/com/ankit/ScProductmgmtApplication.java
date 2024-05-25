@@ -1,5 +1,6 @@
 package com.ankit;
 
+import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -11,6 +12,7 @@ import java.util.Arrays;
 
 @SpringBootApplication
 @RestController
+@EnableEncryptableProperties
 public class ScProductmgmtApplication {
 
 	public static void main(String[] args) {

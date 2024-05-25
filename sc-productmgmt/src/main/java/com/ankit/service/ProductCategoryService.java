@@ -1,6 +1,6 @@
 package com.ankit.service;
 
-import com.ankit.entity.ProductCategoryEntity;
+import com.ankit.entity.category.ProductCategoryEntity;
 import com.ankit.pojo.CommonResponsePojo;
 import com.ankit.pojo.productcategory.ProductCategoryPOJO;
 

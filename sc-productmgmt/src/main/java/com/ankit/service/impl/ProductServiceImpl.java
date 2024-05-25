@@ -2,8 +2,8 @@ package com.ankit.service.impl;
 
 import com.ankit.dao.ProductCategoryRepository;
 import com.ankit.dao.ProductRepository;
-import com.ankit.entity.ProductCategoryEntity;
-import com.ankit.entity.ProductEntity;
+import com.ankit.entity.category.ProductCategoryEntity;
+import com.ankit.entity.product.ProductEntity;
 import com.ankit.entity.ProductInventoryEntity;
 import com.ankit.exception.InvalidRequestException;
 import com.ankit.pojo.*;

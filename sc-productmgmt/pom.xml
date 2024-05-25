@@ -69,6 +69,17 @@
 			<artifactId>aws-lambda-java-core</artifactId>
 			<version>1.2.3</version>
 		</dependency>
+		<!--Encryption of sensitive information in properties file-->
+		<dependency>
+			<groupId>com.github.ulisesbocchio</groupId>
+			<artifactId>jasypt-spring-boot-starter</artifactId>
+			<version>2.1.0</version>
+		</dependency>
+		<!--Using Spring Security for PasswordEncoder and Login Authentication-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

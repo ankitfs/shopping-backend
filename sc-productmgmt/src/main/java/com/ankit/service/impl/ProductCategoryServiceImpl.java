@@ -1,7 +1,7 @@
 package com.ankit.service.impl;
 
 import com.ankit.dao.ProductCategoryRepository;
-import com.ankit.entity.ProductCategoryEntity;
+import com.ankit.entity.category.ProductCategoryEntity;
 import com.ankit.exception.InvalidRequestException;
 import com.ankit.pojo.CommonResponsePojo;
 import com.ankit.pojo.productcategory.ProductCategoryPOJO;
@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.NumberUtils;
 import software.amazon.awssdk.utils.StringUtils;
 
 import java.sql.Timestamp;

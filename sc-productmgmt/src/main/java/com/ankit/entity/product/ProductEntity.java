@@ -1,5 +1,7 @@
-package com.ankit.entity;
+package com.ankit.entity.product;
 
+import com.ankit.entity.ProductInventoryEntity;
+import com.ankit.entity.category.ProductCategoryEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

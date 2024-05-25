@@ -1,6 +1,6 @@
 package com.ankit.dao;
 
-import com.ankit.entity.ProductEntity;
+import com.ankit.entity.product.ProductEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
