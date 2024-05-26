@@ -1,8 +1,13 @@
 package com.ankit.configuration;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.security.Key;
 import java.time.Instant;
@@ -23,4 +28,33 @@ public class JwtHelper {
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
     }
+
+    private static Claims getTokenBody(String token) {
+        try {
+            return Jwts
+                    .parser()
+                    .setSigningKey(SECRET_KEY)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+        }
+        catch (SignatureException | ExpiredJwtException e) {
+            throw new AccessDeniedException("Access Denied : " + e.getMessage());
+        }
+    }
+
+    private static boolean isTokenExpired (String token) {
+        Claims claims = getTokenBody(token);
+        return claims.getExpiration().before(new Date());
+    }
+
+    public static String extractUserName(String token) {
+        return getTokenBody(token).getSubject();
+    }
+
+    public static Boolean validateToken(String token, UserDetails userDetails) {
+        final String username = extractUserName(token);
+        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+    }
+
 }

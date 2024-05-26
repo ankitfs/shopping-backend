@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
-@RequestMapping("/product/category")
+@RequestMapping("/category")
 public class ProductCategoryController {
 
     private static final Logger logger = LoggerFactory.getLogger(ProductCategoryController.class);
