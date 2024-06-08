@@ -40,7 +40,6 @@ CREATE TABLE product (
 	modified_at timestamp WITHOUT time ZONE,
 	CONSTRAINT pk_product PRIMARY KEY (id),
 	CONSTRAINT fk_product_category FOREIGN KEY (category_id) REFERENCES product_category(id),
-	CONSTRAINT fk_product_discount FOREIGN KEY (discount_id) REFERENCES product_discount(id),
 	CONSTRAINT fk_product_inventory FOREIGN KEY (inventory_id) REFERENCES product_inventory(id),
 	CONSTRAINT unique_product_sku UNIQUE (sku)
 );
