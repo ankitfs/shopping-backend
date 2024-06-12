@@ -41,6 +41,7 @@ public class AdminUserController {
             response.setMessage("Admin User has been created");
         }
         catch (Exception ex) {
+            logger.error("Server Error::"+ex.getMessage());
             response.setStatus(false);
             response.setReturnCode(500);
             response.setMessage("Server Error");
