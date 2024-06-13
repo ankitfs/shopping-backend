@@ -14,7 +14,7 @@
 	<name>sc-productmgmt</name>
 	<description>Products Module for Shopping Cart Application</description>
 	<properties>
-		<java.version>17</java.version>
+		<java.version>21</java.version>
 		<jwt.version>0.12.3</jwt.version>
 	</properties>
 	<dependencyManagement>
@@ -70,12 +70,12 @@
 			<artifactId>aws-lambda-java-core</artifactId>
 			<version>1.2.3</version>
 		</dependency>
-		<!--Encryption of sensitive information in properties file-->
+		<!--Encryption of sensitive information in properties file
 		<dependency>
 			<groupId>com.github.ulisesbocchio</groupId>
 			<artifactId>jasypt-spring-boot-starter</artifactId>
 			<version>2.1.0</version>
-		</dependency>
+		</dependency>-->
 		<!--Using Spring Security for PasswordEncoder and Login Authentication-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -103,6 +103,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>productmgmtapi</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
